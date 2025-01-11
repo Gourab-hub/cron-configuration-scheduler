@@ -1,0 +1,79 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.entity.Student;
+import com.example.demo.repository.StudentRepository;
+
+@RestController
+public class StudentController {
+	@Autowired
+	private StudentRepository studentRepository;
+
+	@GetMapping("/students")
+	public List<Student> listAll(Model model) {
+		List<Student> listStudents = studentRepository.findAll();
+//        model.addAttribute("listStudents", listStudents);
+
+		return listStudents;
+	}
+
+	@PostMapping(value = "/uploadExcelFile", produces = "application/json")
+
+	public @ResponseBody List<?> uploadExcelFile(@RequestParam("sheetNumber") Integer sheetNumber, @RequestParam("rowNumber") Integer rowNumber, @RequestParam("oemcode") String oemcode, @RequestParam("masterCode") String masterCode, @RequestParam("fileName") String fileName,
+
+	HttpServletRequest httpRequest) throws IOException {
+
+	MasterDataDTO masterDataDTO = new MasterDataDTO();
+
+	String referenceId = new StringBuilder().append(oemcode).append(masterCode).append(sheetNumber)
+
+	.append(rowNumber).toString();
+
+	MotorUtility.setAuditlogDetails (masterDataDTO.getBusinessCorelationId(), MotorOEMConstant.ISS_SOURCE_OEM,
+
+	referenceId);
+
+	masterDataDTO.setSheetNumber(sheetNumber);
+
+	masterDataDTO.setRowNumber(rowNumber);
+
+	masterDataDTO.setOemcode(oemcode);
+
+	masterDataDTO.setMasterCode(masterCode);
+
+	InputStream in = httpRequest.getInputStream();
+
+	String[] h1 = fileName.split("\\.");
+
+	Workbook workbook null;
+
+	if (h1[hl.length 1].equalsIgnoreCase("xlsx")) {
+
+	workbook = new XSSFWorkbook(in);
+
+	} else {
+
+	Workbook new HSSFWorkbook(in);
+
+	I
+
+	}
+
+	masterDataDTO.setWorkbook(workbook);
+
+	masterDataDTO mdtBusinessService.fileLoad(masterDataDTO);
+
+	List<?> response masterDataDTO.getResponse();
+
+	workbook.close();
+
+	return response;
+	
+
+}

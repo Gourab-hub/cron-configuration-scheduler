@@ -1,0 +1,66 @@
+package com.example.demo.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.DTO.AllFileDTO;
+
+@Service
+public class FileUploadService {
+
+	public AllFileDTO fileLoad(AllFileDTO fileDTO) {
+
+		List<HashMap<String, String>> recordList = new ArrayList<>();
+
+		Sheet sheet = fileDTO.getWorkbook().getSheetAt(fileDTO.getSheetNumber());
+
+		String[] oemKeyList = { "name", "age" };
+		int i = 1;
+
+		for (int rn = 0; rn <= sheet.getLastRowNum(); rn++) {
+
+			List<String> rowVal = new ArrayList<>();
+
+			if (i >= fileDTO.getRowNumber()) {
+
+				for (int cn = 0; cn < sheet.getRow(rn).getLastCellNum(); cn++) {
+					rowVal.add(new DataFormatter().formatCellValue(sheet.getRow(rn).getCell(cn)));
+				}
+				HashMap<String, String> record = null;
+				try {
+					record = populateOEMRequestMap(rowVal, oemKeyList);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				recordList.add(record);
+			}
+			i++;
+		}
+		fileDTO.setRecordList(recordList);
+		return null;
+	}
+
+	private HashMap<String, String> populateOEMRequestMap(List<String> oemRequestString, String[] oemKeyList) {
+		Map<String, String> oemRequestMap = new HashMap<>();
+
+		for (int j = 0; j < oemKeyList.length; j++) {
+
+			String value = "";
+
+			if (j < oemRequestString.size()) {
+
+				value = oemRequestString.get(j);
+
+			}
+			oemRequestMap.put(oemKeyList[j].trim(), value);
+		}
+		return (HashMap<String, String>) oemRequestMap;
+	}
+
+}

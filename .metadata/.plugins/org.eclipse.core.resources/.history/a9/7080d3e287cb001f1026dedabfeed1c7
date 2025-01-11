@@ -1,0 +1,18 @@
+package com.example.demo.DTO;
+
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Workbook;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class FileDTO {
+	private Integer sheetNumber;
+	private Integer rowNumber;
+	private Workbook workbook;
+	private List<?> response;
+
+}
